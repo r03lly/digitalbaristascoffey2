@@ -519,6 +519,10 @@ const ID: Record<string, string> = {
   "Ready to create your perfect coffee today?": "Siap meracik kopi sempurnamu hari ini?",
 };
 
+/** Exposed for tooling/audits: merged dictionaries. */
+export const DICT_EN = EN;
+export const DICT_ID = ID;
+
 /** Translate source copy (Indonesian or English) for the active language. */
 export function t(text: string): string {
   if (currentLang === "id") return ID[text] ?? text;
