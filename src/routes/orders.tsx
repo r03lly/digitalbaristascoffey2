@@ -154,6 +154,17 @@ function OrdersPage() {
 
   const spend = useMemo(() => rows.reduce((sum, r) => sum + r.total, 0), [rows]);
 
+  /** Jumlah pesanan per status untuk ditampilkan sebagai angka di tombol filter. */
+  const statusCount = useMemo(() => {
+    const c: Record<Filter, number> = { semua: rows.length, baru: 0, diproses: 0, selesai: 0 };
+    rows.forEach((r) => {
+      const s = (r.status || "baru") as Filter;
+      if (s === "baru" || s === "diproses" || s === "selesai") c[s] += 1;
+    });
+    return c;
+  }, [rows]);
+
+
   /** Rekap per menu (khusus staf): jumlah terjual dan statusnya. */
   const menuRecap = useMemo(() => {
     const stat = new Map<
