@@ -343,6 +343,27 @@ function OrdersPage() {
           </div>
         </>
 
+      <div className="mt-4 rounded-2xl border border-border bg-card/60 p-3">
+        <div className="flex items-center justify-between gap-2">
+          <div>
+            <p className="text-sm font-semibold text-foreground">{t("Laporan hari ini")}</p>
+            <p className="text-xs text-muted-foreground">
+              {todayRows.length} {t("pesanan")} ·{" "}
+              {formatIDR(todayRows.reduce((s, r) => s + r.total, 0))}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={cetakLaporan}
+            className="inline-flex items-center gap-2 rounded-2xl bg-primary px-3.5 py-2.5 text-sm font-semibold text-primary-foreground"
+          >
+            <Printer className="size-4" /> {t("Cetak")}
+          </button>
+        </div>
+      </div>
+
+
+
 
 
 
