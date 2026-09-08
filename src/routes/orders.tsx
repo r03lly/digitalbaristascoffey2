@@ -134,11 +134,11 @@ function OrdersPage() {
   }, [authReady, isBarista, load]);
 
   useEffect(() => {
-    if (!isBarista) return;
     void fetchMenuItems()
       .then(setMenu)
       .catch(() => setMenu([]));
-  }, [isBarista]);
+  }, []);
+
 
   const list = useMemo(() => {
     const s = query.trim().toLowerCase();
