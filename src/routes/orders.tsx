@@ -7,7 +7,6 @@ import {
   CupSoda,
   Download,
   Loader2,
-  RefreshCw,
   Search,
   Sparkles,
   Timer,
@@ -319,18 +318,6 @@ function OrdersPage() {
         </>
 
 
-      <div className="mt-4 flex justify-end">
-        <button
-          type="button"
-          onClick={() => {
-            setLoading(true);
-            void load();
-          }}
-          className="inline-flex items-center gap-1 rounded-lg border border-border px-2 py-1 text-[0.68rem] uppercase text-muted-foreground"
-        >
-          <RefreshCw className="size-3" /> {t("Muat ulang")}
-        </button>
-      </div>
 
 
       <label className="mt-3 flex items-center gap-2 rounded-2xl border border-border bg-card/60 px-3 py-2.5">
