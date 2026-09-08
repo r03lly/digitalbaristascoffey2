@@ -20,6 +20,70 @@ import { rowToOrder } from "@/lib/orders-db";
 import { downloadReceipt } from "@/lib/receipt";
 import { getLang, t } from "@/lib/i18n";
 import { fetchMenuItems, type MenuRow } from "@/lib/menu-db";
+import { isToday, printDailyReport } from "@/lib/report-print";
+import { Printer } from "lucide-react";
+
+type RecapItem = {
+  name: string;
+  emoji: string;
+  baru: number;
+  diproses: number;
+  selesai: number;
+  sold: number;
+};
+
+/** Hitung rekap per menu dari daftar pesanan. */
+function buildRecap(rows: OrderRowLike[], menu: MenuRow[]): RecapItem[] {
+  const stat = new Map<string, { label: string; baru: number; diproses: number; selesai: number }>();
+  const add = (name: string, status: string, qty: number) => {
+    const label = name.trim();
+    const key = label.toLowerCase();
+    if (!key) return;
+    const cur = stat.get(key) ?? { label, baru: 0, diproses: 0, selesai: 0 };
+    const s = status === "diproses" ? "diproses" : status === "selesai" ? "selesai" : "baru";
+    cur[s] += qty;
+    stat.set(key, cur);
+  };
+  rows.forEach((r) => {
+    const lines = Array.isArray(r.lines) ? (r.lines as Line[]) : [];
+    const status = r.status || "baru";
+    if (r.kind === "regular" && lines.length) {
+      lines.forEach((l) => add(String(l.name ?? l.label ?? ""), status, qtyOf(l.amount)));
+    } else {
+      add(r.name, status, 1);
+    }
+  });
+  const known = new Set(menu.map((m) => m.name.trim().toLowerCase()));
+  const items = menu.map((m) => {
+    const s = stat.get(m.name.trim().toLowerCase()) ?? { baru: 0, diproses: 0, selesai: 0 };
+    return {
+      name: m.name,
+      emoji: m.emoji,
+      baru: s.baru,
+      diproses: s.diproses,
+      selesai: s.selesai,
+      sold: s.baru + s.diproses + s.selesai,
+    };
+  });
+  const extras = [...stat.entries()]
+    .filter(([k]) => !known.has(k))
+    .map(([, v]) => ({
+      name: v.label,
+      emoji: "✨",
+      baru: v.baru,
+      diproses: v.diproses,
+      selesai: v.selesai,
+      sold: v.baru + v.diproses + v.selesai,
+    }));
+  return [...items, ...extras].sort((a, b) => b.sold - a.sold || a.name.localeCompare(b.name));
+}
+
+type OrderRowLike = {
+  name: string;
+  kind: string;
+  status: string;
+  lines: unknown;
+};
 
 export const Route = createFileRoute("/orders")({
   head: () => ({
@@ -164,54 +228,16 @@ function OrdersPage() {
   }, [rows]);
 
 
-  /** Rekap per menu (khusus staf): jumlah terjual dan statusnya. */
-  const menuRecap = useMemo(() => {
-    const stat = new Map<
-      string,
-      { label: string; baru: number; diproses: number; selesai: number }
-    >();
-    const add = (name: string, status: string, qty: number) => {
-      const label = name.trim();
-      const key = label.toLowerCase();
-      if (!key) return;
-      const cur = stat.get(key) ?? { label, baru: 0, diproses: 0, selesai: 0 };
-      const s = status === "diproses" ? "diproses" : status === "selesai" ? "selesai" : "baru";
-      cur[s] += qty;
-      stat.set(key, cur);
-    };
-    rows.forEach((r) => {
-      const lines = Array.isArray(r.lines) ? (r.lines as Line[]) : [];
-      const status = r.status || "baru";
-      if (r.kind === "regular" && lines.length) {
-        lines.forEach((l) => add(String(l.name ?? l.label ?? ""), status, qtyOf(l.amount)));
-      } else {
-        add(r.name, status, 1);
-      }
-    });
-    const known = new Set(menu.map((m) => m.name.trim().toLowerCase()));
-    const items = menu.map((m) => {
-      const s = stat.get(m.name.trim().toLowerCase()) ?? { baru: 0, diproses: 0, selesai: 0 };
-      return {
-        name: m.name,
-        emoji: m.emoji,
-        baru: s.baru,
-        diproses: s.diproses,
-        selesai: s.selesai,
-        sold: s.baru + s.diproses + s.selesai,
-      };
-    });
-    const extras = [...stat.entries()]
-      .filter(([k]) => !known.has(k))
-      .map(([, v]) => ({
-        name: v.label,
-        emoji: "✨",
-        baru: v.baru,
-        diproses: v.diproses,
-        selesai: v.selesai,
-        sold: v.baru + v.diproses + v.selesai,
-      }));
-    return [...items, ...extras].sort((a, b) => b.sold - a.sold || a.name.localeCompare(b.name));
-  }, [rows, menu]);
+  /** Rekap per menu: jumlah terjual dan statusnya. */
+  const menuRecap = useMemo(() => buildRecap(rows, menu), [rows, menu]);
+
+  const todayRows = useMemo(() => rows.filter((r) => isToday(r.created_at)), [rows]);
+  const todayRecap = useMemo(() => buildRecap(todayRows, menu), [todayRows, menu]);
+
+  function cetakLaporan() {
+    const ok = printDailyReport(todayRows, todayRecap);
+    if (!ok) setError(t("Izinkan pop-up di browser untuk mencetak laporan."));
+  }
 
   async function setStatus(id: string, status: "baru" | "diproses" | "selesai") {
     setBusyId(id);
@@ -316,6 +342,27 @@ function OrdersPage() {
             )}
           </div>
         </>
+
+      <div className="mt-4 rounded-2xl border border-border bg-card/60 p-3">
+        <div className="flex items-center justify-between gap-2">
+          <div>
+            <p className="text-sm font-semibold text-foreground">{t("Laporan hari ini")}</p>
+            <p className="text-xs text-muted-foreground">
+              {todayRows.length} {t("pesanan")} ·{" "}
+              {formatIDR(todayRows.reduce((s, r) => s + r.total, 0))}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={cetakLaporan}
+            className="inline-flex items-center gap-2 rounded-2xl bg-primary px-3.5 py-2.5 text-sm font-semibold text-primary-foreground"
+          >
+            <Printer className="size-4" /> {t("Cetak")}
+          </button>
+        </div>
+      </div>
+
+
 
 
 
