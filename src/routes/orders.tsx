@@ -354,16 +354,20 @@ function OrdersPage() {
             key={key}
             type="button"
             onClick={() => setFilter(key)}
-            className={`rounded-2xl border px-2 py-2 text-[0.68rem] font-semibold uppercase tracking-[0.06em] ${
+            className={`rounded-2xl border px-2 py-2 text-center ${
               filter === key
                 ? "border-primary/60 bg-primary/10 text-primary"
                 : "border-border text-muted-foreground"
             }`}
           >
-            {t(label)}
+            <span className="block text-base font-bold leading-none">{statusCount[key]}</span>
+            <span className="mt-1 block text-[0.6rem] font-semibold uppercase tracking-[0.06em]">
+              {t(label)}
+            </span>
           </button>
         ))}
       </div>
+
 
       {error && <p className="mt-2 text-sm text-destructive">{error}</p>}
 
