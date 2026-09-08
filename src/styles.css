@@ -1,0 +1,252 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Digital Barista by Scoffey — design system (mengikuti PDF UI/UX Summary).
+ * Visual direction: navy technology + warm wood + gold coffee accents.
+ * Palet PDF: #0D1B2A #14213D #1B263B #D4AF37 #E9D6B1 #6B4423 #F5F7FA
+ */
+
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-gold: var(--gold);
+  --color-gold-soft: var(--gold-soft);
+  --color-cream: var(--cream);
+  --color-wood: var(--wood);
+  --color-navy-deep: var(--navy-deep);
+  --color-navy: var(--navy);
+  --color-navy-soft: var(--navy-soft);
+  --font-sans: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Bebas Neue", "Poppins", sans-serif;
+}
+
+:root {
+  --radius: 1rem;
+  /* #0D1B2A */
+  --navy-deep: oklch(0.218 0.036 251.3);
+  /* #14213D */
+  --navy: oklch(0.252 0.056 264);
+  /* #1B263B */
+  --navy-soft: oklch(0.269 0.042 262.7);
+  /* #D4AF37 */
+  --gold: oklch(0.767 0.139 91.1);
+  /* #E9D6B1 */
+  --gold-soft: oklch(0.882 0.053 84);
+  /* #F5F7FA */
+  --cream: oklch(0.975 0.005 258.6);
+  /* #6B4423 */
+  --wood: oklch(0.424 0.072 59.3);
+
+  --background: var(--navy-deep);
+  --foreground: var(--cream);
+  --card: var(--navy);
+  --card-foreground: var(--cream);
+  --popover: var(--navy);
+  --popover-foreground: var(--cream);
+  --primary: var(--gold);
+  --primary-foreground: oklch(0.218 0.036 251.3);
+  --secondary: var(--navy-soft);
+  --secondary-foreground: var(--cream);
+  --muted: var(--navy-soft);
+  --muted-foreground: oklch(0.752 0.019 258.6);
+  --accent: var(--navy-soft);
+  --accent-foreground: var(--gold);
+  --destructive: oklch(0.62 0.2 25);
+  --destructive-foreground: var(--cream);
+  --border: oklch(0.98 0.02 90 / 14%);
+  --input: oklch(0.98 0.02 90 / 18%);
+  --ring: var(--gold);
+
+  --gradient-navy: linear-gradient(160deg, oklch(0.252 0.056 264), oklch(0.196 0.033 251.3));
+  --gradient-gold: linear-gradient(100deg, oklch(0.767 0.139 91.1), oklch(0.882 0.053 84));
+  --gradient-wood: linear-gradient(135deg, oklch(0.424 0.072 59.3), oklch(0.318 0.055 55));
+  --shadow-premium: 0 24px 60px -24px oklch(0.12 0.03 251 / 80%);
+  --shadow-gold: 0 12px 32px -12px oklch(0.767 0.139 91.1 / 45%);
+}
+
+
+.dark {
+  --background: var(--navy-deep);
+  --foreground: var(--cream);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+@utility surface-navy {
+  background-image: var(--gradient-navy);
+}
+
+@utility surface-gold {
+  background-image: var(--gradient-gold);
+}
+
+@utility surface-wood {
+  background-image: var(--gradient-wood);
+}
+
+@utility text-gold-gradient {
+  background-image: var(--gradient-gold);
+  background-clip: text;
+  color: transparent;
+}
+
+@utility shadow-premium {
+  box-shadow: var(--shadow-premium);
+}
+
+@utility shadow-gold {
+  box-shadow: var(--shadow-gold);
+}
+
+@utility display-title {
+  font-family: var(--font-display);
+  letter-spacing: 0.02em;
+  line-height: 0.95;
+}
+
+@utility label-caps {
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@utility animate-rise {
+  animation: rise-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Memudarkan tepi gambar hero supaya menyatu dengan background navy (tanpa bingkai). */
+@utility mask-hero {
+  -webkit-mask-image: radial-gradient(
+    ellipse 72% 58% at 50% 50%,
+    black 58%,
+    transparent 100%
+  );
+  mask-image: radial-gradient(ellipse 72% 58% at 50% 50%, black 58%, transparent 100%);
+}
+
+/* Kiosk / touchscreen: sembunyikan scrollbar tetapi scroll tetap berfungsi. */
+html {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+*::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+body {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  overscroll-behavior: none;
+  /* Cegah zoom: pinch & double-tap pada touch, ctrl+wheel pada desktop. */
+  touch-action: pan-x pan-y;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  gesture-start: none;
+}
+
+* {
+  scrollbar-width: none;
+}
+
+/* ── Animasi "AI sedang meracik" (Digital Barista) ───────────────── */
+@keyframes barista-steam {
+  0% { opacity: 0; transform: translateY(6px) scaleX(0.85); }
+  35% { opacity: 0.85; }
+  100% { opacity: 0; transform: translateY(-26px) scaleX(1.25); }
+}
+@keyframes barista-fill {
+  0% { height: 12%; }
+  50% { height: 78%; }
+  100% { height: 12%; }
+}
+@keyframes barista-orbit {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes barista-shimmer {
+  0% { background-position: -180% 0; }
+  100% { background-position: 180% 0; }
+}
+@keyframes barista-pulse-ring {
+  0% { transform: scale(0.9); opacity: 0.7; }
+  100% { transform: scale(1.35); opacity: 0; }
+}
+
+@utility animate-steam {
+  animation: barista-steam 2.6s ease-in-out infinite;
+}
+@utility animate-brew-fill {
+  animation: barista-fill 2.4s ease-in-out infinite;
+}
+@utility animate-orbit {
+  animation: barista-orbit 6s linear infinite;
+}
+@utility animate-pulse-ring {
+  animation: barista-pulse-ring 2s ease-out infinite;
+}
+@utility skeleton-shimmer {
+  background-image: linear-gradient(
+    100deg,
+    var(--muted) 30%,
+    oklch(0.767 0.139 91.1 / 18%) 50%,
+    var(--muted) 70%
+  );
+  background-size: 220% 100%;
+  animation: barista-shimmer 1.6s linear infinite;
+}
