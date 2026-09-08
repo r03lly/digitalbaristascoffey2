@@ -279,7 +279,7 @@ function OrdersPage() {
         </div>
       </div>
 
-      {isBarista && (
+      {isBarista || true ? (
         <>
           <div className="mt-4">
             <SectionLabel>{t("Rekap menu")}</SectionLabel>
