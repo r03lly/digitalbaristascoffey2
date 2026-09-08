@@ -7,7 +7,6 @@ import {
   CupSoda,
   Download,
   Loader2,
-  RefreshCw,
   Search,
   Sparkles,
   Timer,
