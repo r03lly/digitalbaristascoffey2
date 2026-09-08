@@ -134,11 +134,11 @@ function OrdersPage() {
   }, [authReady, isBarista, load]);
 
   useEffect(() => {
-    if (!isBarista) return;
     void fetchMenuItems()
       .then(setMenu)
       .catch(() => setMenu([]));
-  }, [isBarista]);
+  }, []);
+
 
   const list = useMemo(() => {
     const s = query.trim().toLowerCase();
@@ -153,6 +153,17 @@ function OrdersPage() {
   }, [rows, filter, query]);
 
   const spend = useMemo(() => rows.reduce((sum, r) => sum + r.total, 0), [rows]);
+
+  /** Jumlah pesanan per status untuk ditampilkan sebagai angka di tombol filter. */
+  const statusCount = useMemo(() => {
+    const c: Record<Filter, number> = { semua: rows.length, baru: 0, diproses: 0, selesai: 0 };
+    rows.forEach((r) => {
+      const s = (r.status || "baru") as Filter;
+      if (s === "baru" || s === "diproses" || s === "selesai") c[s] += 1;
+    });
+    return c;
+  }, [rows]);
+
 
   /** Rekap per menu (khusus staf): jumlah terjual dan statusnya. */
   const menuRecap = useMemo(() => {
@@ -268,19 +279,19 @@ function OrdersPage() {
         </div>
       </div>
 
-      {isBarista && (
-        <>
+      <>
           <div className="mt-4">
             <SectionLabel>{t("Rekap menu")}</SectionLabel>
           </div>
           <div className="mt-2 overflow-hidden rounded-2xl border border-border bg-card/60">
             <div className="grid grid-cols-[1fr_auto_auto_auto_auto] gap-2 border-b border-border/60 px-3 py-2 text-[0.6rem] uppercase tracking-[0.08em] text-muted-foreground">
               <span>{t("Menu")}</span>
-              <span className="text-right">{t("Laku")}</span>
-              <span className="text-right">{t("Dipesan")}</span>
+              <span className="text-right">{t("Semua")}</span>
+              <span className="text-right">{t("Menunggu")}</span>
               <span className="text-right">{t("Diproses")}</span>
-              <span className="text-right">{t("Diserahkan")}</span>
+              <span className="text-right">{t("Selesai")}</span>
             </div>
+
             {menuRecap.length ? (
               <ul className="divide-y divide-border/40">
                 {menuRecap.map((m) => (
@@ -306,7 +317,7 @@ function OrdersPage() {
             )}
           </div>
         </>
-      )}
+
 
       <div className="mt-4">
         <SectionLabel
@@ -343,16 +354,20 @@ function OrdersPage() {
             key={key}
             type="button"
             onClick={() => setFilter(key)}
-            className={`rounded-2xl border px-2 py-2 text-[0.68rem] font-semibold uppercase tracking-[0.06em] ${
+            className={`rounded-2xl border px-2 py-2 text-center ${
               filter === key
                 ? "border-primary/60 bg-primary/10 text-primary"
                 : "border-border text-muted-foreground"
             }`}
           >
-            {t(label)}
+            <span className="block text-base font-bold leading-none">{statusCount[key]}</span>
+            <span className="mt-1 block text-[0.6rem] font-semibold uppercase tracking-[0.06em]">
+              {t(label)}
+            </span>
           </button>
         ))}
       </div>
+
 
       {error && <p className="mt-2 text-sm text-destructive">{error}</p>}
 
