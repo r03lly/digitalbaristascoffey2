@@ -1,4 +1,5 @@
 import { formatIDR } from "./barista-data";
+import { getLang, t } from "./i18n";
 
 export type ReportRow = {
   code: string;
@@ -42,13 +43,14 @@ function esc(s: string) {
 /** Buka jendela cetak berisi laporan penjualan hari ini. */
 export function printDailyReport(rows: ReportRow[], recap: ReportRecap[]) {
   const now = new Date();
-  const tanggal = now.toLocaleDateString("id-ID", {
+  const locale = getLang() === "id" ? "id-ID" : "en-GB";
+  const tanggal = now.toLocaleDateString(locale, {
     weekday: "long",
     day: "numeric",
     month: "long",
     year: "numeric",
   });
-  const jam = now.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
+  const jam = now.toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit" });
   const omzet = rows.reduce((s, r) => s + r.total, 0);
   const count = (k: string) => rows.filter((r) => (r.status || "baru") === k).length;
 
@@ -56,17 +58,17 @@ export function printDailyReport(rows: ReportRow[], recap: ReportRecap[]) {
     ? rows
         .map(
           (r) => `<tr>
-      <td>${new Date(r.created_at).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}</td>
+      <td>${new Date(r.created_at).toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit" })}</td>
       <td>${esc(r.code)}</td>
       <td>${esc(r.customer || "-")}</td>
       <td>${esc(r.name)}</td>
       <td>${esc(r.payment || "-")}</td>
-      <td>${esc(STATUS[r.status || "baru"] ?? r.status)}</td>
+      <td>${esc(t(STATUS[r.status || "baru"] ?? r.status))}</td>
       <td class="r">${formatIDR(r.total)}</td>
     </tr>`,
         )
         .join("")
-    : `<tr><td colspan="7" class="c">Belum ada pesanan hari ini.</td></tr>`;
+    : `<tr><td colspan="7" class="c">${esc(t("Belum ada pesanan hari ini."))}</td></tr>`;
 
   const recapRows = recap
     .filter((m) => m.sold > 0)
@@ -81,8 +83,8 @@ export function printDailyReport(rows: ReportRow[], recap: ReportRecap[]) {
     )
     .join("");
 
-  const html = `<!doctype html><html lang="id"><head><meta charset="utf-8">
-<title>Laporan Harian Scoffey — ${tanggal}</title>
+  const html = `<!doctype html><html lang="${getLang()}"><head><meta charset="utf-8">
+<title>${esc(t("Laporan Harian Scoffey"))} — ${tanggal}</title>
 <style>
   *{box-sizing:border-box}
   body{font-family:ui-sans-serif,system-ui,Arial,sans-serif;color:#1b1410;margin:32px;font-size:12px}
@@ -100,20 +102,20 @@ export function printDailyReport(rows: ReportRow[], recap: ReportRecap[]) {
   tfoot td{font-weight:700;border-top:2px solid #d8ccc3}
   @media print{body{margin:12mm}}
 </style></head><body>
-<h1>Laporan Penjualan Harian — Scoffey</h1>
-<p class="sub">${tanggal} · dicetak ${jam}</p>
+<h1>${esc(t("Laporan Penjualan Harian — Scoffey"))}</h1>
+<p class="sub">${tanggal} · ${esc(t("dicetak"))} ${jam}</p>
 <div class="cards">
-  <div class="card"><b>${rows.length}</b><span>Pesanan</span></div>
-  <div class="card"><b>${formatIDR(omzet)}</b><span>Omzet</span></div>
-  <div class="card"><b>${count("baru")}</b><span>Menunggu</span></div>
-  <div class="card"><b>${count("diproses")}</b><span>Diproses</span></div>
-  <div class="card"><b>${count("selesai")}</b><span>Selesai</span></div>
+  <div class="card"><b>${rows.length}</b><span>${esc(t("Pesanan"))}</span></div>
+  <div class="card"><b>${formatIDR(omzet)}</b><span>${esc(t("Omzet"))}</span></div>
+  <div class="card"><b>${count("baru")}</b><span>${esc(t("Menunggu"))}</span></div>
+  <div class="card"><b>${count("diproses")}</b><span>${esc(t("Diproses"))}</span></div>
+  <div class="card"><b>${count("selesai")}</b><span>${esc(t("Selesai"))}</span></div>
 </div>
-<h2>Daftar Pesanan</h2>
-<table><thead><tr><th>Jam</th><th>Kode</th><th>Pelanggan</th><th>Menu</th><th>Bayar</th><th>Status</th><th class="r">Total</th></tr></thead>
+<h2>${esc(t("Daftar Pesanan"))}</h2>
+<table><thead><tr><th>${esc(t("Jam"))}</th><th>${esc(t("Kode"))}</th><th>${esc(t("Pelanggan"))}</th><th>${esc(t("Menu"))}</th><th>${esc(t("Bayar"))}</th><th>${esc(t("Status"))}</th><th class="r">Total</th></tr></thead>
 <tbody>${orderRows}</tbody>
-<tfoot><tr><td colspan="6">Total</td><td class="r">${formatIDR(omzet)}</td></tr></tfoot></table>
-${recapRows ? `<h2>Rekap Menu</h2><table><thead><tr><th>Menu</th><th class="r">Semua</th><th class="r">Menunggu</th><th class="r">Diproses</th><th class="r">Selesai</th></tr></thead><tbody>${recapRows}</tbody></table>` : ""}
+<tfoot><tr><td colspan="6">${esc(t("Total"))}</td><td class="r">${formatIDR(omzet)}</td></tr></tfoot></table>
+${recapRows ? `<h2>${esc(t("Rekap Menu"))}</h2><table><thead><tr><th>${esc(t("Menu"))}</th><th class="r">${esc(t("Semua"))}</th><th class="r">${esc(t("Menunggu"))}</th><th class="r">${esc(t("Diproses"))}</th><th class="r">${esc(t("Selesai"))}</th></tr></thead><tbody>${recapRows}</tbody></table>` : ""}
 <script>window.onload=function(){window.print()}</script>
 </body></html>`;
 

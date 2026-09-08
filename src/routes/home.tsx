@@ -306,8 +306,8 @@ function HomePage() {
                         key={`${l.name}-${i}`}
                         className="flex items-center justify-between text-sm text-foreground"
                       >
-                        <span>{l.name}</span>
-                        <span className="text-muted-foreground">{l.amount}</span>
+                        <span>{t(l.name)}</span>
+                        <span className="text-muted-foreground">{t(l.amount)}</span>
                       </li>
                     ))}
                   </ul>
