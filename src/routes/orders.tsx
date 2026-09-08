@@ -279,19 +279,19 @@ function OrdersPage() {
         </div>
       </div>
 
-      {isBarista || true ? (
-        <>
+      <>
           <div className="mt-4">
             <SectionLabel>{t("Rekap menu")}</SectionLabel>
           </div>
           <div className="mt-2 overflow-hidden rounded-2xl border border-border bg-card/60">
             <div className="grid grid-cols-[1fr_auto_auto_auto_auto] gap-2 border-b border-border/60 px-3 py-2 text-[0.6rem] uppercase tracking-[0.08em] text-muted-foreground">
               <span>{t("Menu")}</span>
-              <span className="text-right">{t("Laku")}</span>
-              <span className="text-right">{t("Dipesan")}</span>
+              <span className="text-right">{t("Semua")}</span>
+              <span className="text-right">{t("Menunggu")}</span>
               <span className="text-right">{t("Diproses")}</span>
-              <span className="text-right">{t("Diserahkan")}</span>
+              <span className="text-right">{t("Selesai")}</span>
             </div>
+
             {menuRecap.length ? (
               <ul className="divide-y divide-border/40">
                 {menuRecap.map((m) => (
