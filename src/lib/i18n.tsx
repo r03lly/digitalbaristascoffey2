@@ -5,6 +5,7 @@ import { EN_TECHNOLOGY, ID_TECHNOLOGY } from "./i18n-technology";
 import { EN_FLOW, ID_FLOW } from "./i18n-flow";
 import { EN_EXTRA, ID_EXTRA } from "./i18n-extra";
 import { EN_EXTRA2, ID_EXTRA2 } from "./i18n-extra2";
+import { EN_EXTRA3, ID_EXTRA3 } from "./i18n-extra3";
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
 export type Lang = "en" | "id";
@@ -27,6 +28,7 @@ const EN: Record<string, string> = {
   ...EN_FLOW,
   ...EN_EXTRA,
   ...EN_EXTRA2,
+  ...EN_EXTRA3,
   "MENUNGGU PEMBAYARAN": "AWAITING PAYMENT",
   "Bayar ke barista di kasir, lalu tekan tombol di bawah untuk melihat struk.":
     "Pay the barista at the counter, then tap the button below to see your receipt.",
@@ -420,6 +422,7 @@ const ID: Record<string, string> = {
   ...ID_FLOW,
   ...ID_EXTRA,
   ...ID_EXTRA2,
+  ...ID_EXTRA3,
   // Navigation & page titles
   Home: "Beranda",
   Create: "Buat",
