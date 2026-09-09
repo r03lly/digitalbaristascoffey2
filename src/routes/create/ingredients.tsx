@@ -1,6 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { GoldButton, InfoCard, PhoneShell, ProgressDots } from "@/components/PhoneShell";
-import { GROUP_LIMITS, INGREDIENTS, formatIDR } from "@/lib/barista-data";
+import {
+  COFFEE_INGREDIENT_IDS,
+  GROUP_LIMITS,
+  INGREDIENTS,
+  formatIDR,
+  isCoffeeBase,
+} from "@/lib/barista-data";
 import { useBarista } from "@/lib/barista-store";
 import { t } from "@/lib/i18n";
 
@@ -26,8 +32,12 @@ export const Route = createFileRoute("/create/ingredients")({
 const GROUPS = ["Susu & Krim", "Sirup & Rasa", "Topping", "Bahan Lokal", "Ekstra"] as const;
 
 function IngredientsPage() {
-  const { ingredients, toggleIngredient } = useBarista();
-  const chosen = INGREDIENTS.filter((i) => ingredients.includes(i.id));
+  const { ingredients, toggleIngredient, baseId } = useBarista();
+  const allowCoffee = isCoffeeBase(baseId);
+  const available = INGREDIENTS.filter(
+    (i) => allowCoffee || !COFFEE_INGREDIENT_IDS.includes(i.id),
+  );
+  const chosen = available.filter((i) => ingredients.includes(i.id));
 
   return (
     <PhoneShell title={t("PICK INGREDIENTS")} back="/create/taste">
@@ -41,6 +51,12 @@ function IngredientsPage() {
         {t("Pilih bahan favoritmu dengan tap. Bahan yang dipilih akan terhighlight.")}
       </p>
 
+      {!allowCoffee ? (
+        <p className="mt-2 text-xs text-primary">
+          {t("Base tanpa kopi: semua bahan berbahan kopi disembunyikan.")}
+        </p>
+      ) : null}
+
       <div className="mt-5 space-y-4">
         {GROUPS.map((g) => (
           <section key={g}>
@@ -53,7 +69,7 @@ function IngredientsPage() {
               ) : null}
             </div>
             <div className="mt-2 grid grid-cols-2 gap-2 md:grid-cols-3">
-              {INGREDIENTS.filter((i) => i.group === g).map((i) => {
+              {available.filter((i) => i.group === g).map((i) => {
                 const active = ingredients.includes(i.id);
                 return (
                   <button

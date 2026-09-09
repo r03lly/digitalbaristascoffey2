@@ -9,17 +9,27 @@ export type Base = {
   price: number;
   /** Takaran dasar yang dipakai barista. */
   amount: string;
+  /** Kata singkat yang dipakai pada nama racikan. */
+  short: string;
+  /** Base ini mengandung kopi? */
+  coffee: boolean;
 };
 
 export const BASES: Base[] = [
-  { id: "espresso", name: "Espresso", desc: "Pekat, bold, karakter kopi paling dominan.", strength: 5, emoji: "☕", price: 22000, amount: "2 shot (60 ml)" },
-  { id: "latte", name: "Latte Base", desc: "Lembut, creamy, seimbang dengan susu.", strength: 2, emoji: "🥛", price: 28000, amount: "1 shot + 150 ml susu" },
-  { id: "coldbrew", name: "Cold Brew", desc: "Smooth, low acid, manis alami.", strength: 4, emoji: "🧊", price: 30000, amount: "180 ml" },
-  { id: "matcha", name: "Matcha", desc: "Earthy, hijau segar, tanpa kopi.", strength: 2, emoji: "🍵", price: 29000, amount: "5 g bubuk + 150 ml air" },
-  { id: "chocolate", name: "Chocolate", desc: "Manis, hangat, ramah untuk semua.", strength: 1, emoji: "🍫", price: 26000, amount: "30 g cokelat + 150 ml susu" },
-  { id: "teh", name: "Teh", desc: "Ringan dan menenangkan, seduhan daun teh pilihan.", strength: 2, emoji: "🫖", price: 20000, amount: "1 kantong + 200 ml air" },
-  { id: "noncoffee", name: "Non Coffee", desc: "Tanpa kopi sama sekali — dasar jus, milkshake, dan mocktail.", strength: 1, emoji: "🥤", price: 24000, amount: "200 ml" },
+  { id: "espresso", name: "Espresso", desc: "Pekat, bold, karakter kopi paling dominan.", strength: 5, emoji: "☕", price: 22000, amount: "2 shot (60 ml)", short: "Espresso", coffee: true },
+  { id: "latte", name: "Latte Base", desc: "Lembut, creamy, seimbang dengan susu.", strength: 2, emoji: "🥛", price: 28000, amount: "1 shot + 150 ml susu", short: "Latte", coffee: true },
+  { id: "coldbrew", name: "Cold Brew", desc: "Smooth, low acid, manis alami.", strength: 4, emoji: "🧊", price: 30000, amount: "180 ml", short: "Cold Brew", coffee: true },
+  { id: "matcha", name: "Matcha", desc: "Earthy, hijau segar, tanpa kopi.", strength: 2, emoji: "🍵", price: 29000, amount: "5 g bubuk + 150 ml air", short: "Matcha", coffee: false },
+  { id: "chocolate", name: "Chocolate", desc: "Manis, hangat, ramah untuk semua.", strength: 1, emoji: "🍫", price: 26000, amount: "30 g cokelat + 150 ml susu", short: "Choco", coffee: false },
+  { id: "teh", name: "Teh", desc: "Ringan dan menenangkan, seduhan daun teh pilihan.", strength: 2, emoji: "🫖", price: 20000, amount: "1 kantong + 200 ml air", short: "Tea", coffee: false },
+  { id: "noncoffee", name: "Non Coffee", desc: "Tanpa kopi sama sekali — dasar jus, milkshake, dan mocktail.", strength: 1, emoji: "🥤", price: 24000, amount: "200 ml", short: "Splash", coffee: false },
 ];
+
+/** Bahan yang mengandung kopi — disembunyikan untuk base tanpa kopi. */
+export const COFFEE_INGREDIENT_IDS = ["extra-shot"];
+
+export const isCoffeeBase = (baseId: string | null) =>
+  (BASES.find((b) => b.id === baseId) ?? DEFAULT_BASE).coffee;
 
 export const DEFAULT_BASE: Base = BASES[0]!;
 
@@ -223,7 +233,7 @@ export function buildRecipe(
   const compatibility = Math.max(70, Math.min(98, Math.round(matchScore - 3 + (ingredients.length > 5 ? -4 : 2))));
 
   const flavorLead = ingredients.find((i) => i.group === "Sirup & Rasa")?.name ?? taste.mood;
-  const name = `${NAME_PREFIX[taste.mood] ?? "Signature"} ${flavorLead} ${base.name.split(" ")[0] ?? base.name}`;
+  const name = `${NAME_PREFIX[taste.mood] ?? "Signature"} ${flavorLead} ${base.short}`;
 
   const price =
     base.price +
@@ -251,7 +261,9 @@ export function buildRecipe(
 
     steps: id
       ? [
-          `Ekstraksi ${base.name} sebagai fondasi rasa.`,
+          base.coffee
+            ? `Ekstraksi ${base.name} sebagai fondasi rasa.`
+            : `Siapkan ${base.name} sebagai fondasi rasa (tanpa kopi).`,
           ingredients.length
             ? `Tambahkan ${ingredients.map((i) => i.name).join(", ")} sesuai takaran AI.`
             : "Sajikan murni tanpa tambahan bahan.",
@@ -259,7 +271,9 @@ export function buildRecipe(
           "Cek balance akhir dan sajikan dalam gelas signature Scoffey.",
         ]
       : [
-          `Extract the ${base.name} as the flavour foundation.`,
+          base.coffee
+            ? `Extract the ${base.name} as the flavour foundation.`
+            : `Prepare the ${base.name} as the flavour foundation (coffee-free).`,
           ingredients.length
             ? `Add ${ingredients.map((i) => i.name).join(", ")} per the AI measurements.`
             : "Serve pure with no extra ingredients.",

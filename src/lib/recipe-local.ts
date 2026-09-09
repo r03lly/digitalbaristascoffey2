@@ -79,7 +79,7 @@ export function buildLocalVariants(
 
   const names = NAME_BANK[taste.mood] ?? NAME_BANK["Classic"]!;
   const flavorLead = ingredients.find((i) => i.group === "Sirup & Rasa")?.name;
-  const baseWord = base.name.split(" ")[0] ?? base.name;
+  const baseWord = base.short;
 
   const milkItem = ingredients.find((i) => i.group === "Susu & Krim");
   const toppingItems = ingredients.filter((i) => i.group === "Topping");
@@ -145,7 +145,9 @@ export function buildLocalVariants(
         : id
           ? [
               idx === 1
-                ? `Ekstraksi ${base.name} lebih pekat dari takaran standar.`
+                ? base.coffee
+                  ? `Ekstraksi ${base.name} lebih pekat dari takaran standar.`
+                  : `Siapkan ${base.name} dengan takaran lebih pekat.`
                 : `Siapkan ${base.name} dengan takaran lebih ringan.`,
               ingredients.length
                 ? `Tambahkan ${ingredients.map((i) => i.name).join(", ")} dengan urutan rasa utama dulu.`
@@ -157,7 +159,9 @@ export function buildLocalVariants(
             ]
           : [
               idx === 1
-                ? `Extract the ${base.name} slightly stronger than standard.`
+                ? base.coffee
+                  ? `Extract the ${base.name} slightly stronger than standard.`
+                  : `Prepare the ${base.name} with a stronger measure.`
                 : `Prepare the ${base.name} with a lighter measure.`,
               ingredients.length
                 ? `Add ${ingredients.map((i) => i.name).join(", ")}, lead flavour first.`
