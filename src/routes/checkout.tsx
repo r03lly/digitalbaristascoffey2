@@ -401,7 +401,7 @@ function CheckoutPage() {
             </label>
             {phoneError && (
               <p className="mt-1 text-xs text-destructive">
-                {t("Nomor Telp/WhatsApp wajib diisi sebelum konfirmasi pesanan.")}
+                {t("Nomor tidak valid — minimal 9 angka, atau biarkan kosong.")}
               </p>
             )}
           </section>
