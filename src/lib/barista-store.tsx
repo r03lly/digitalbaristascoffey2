@@ -10,10 +10,12 @@ import {
   type Context,
 } from "react";
 import {
+  COFFEE_INGREDIENT_IDS,
   DEFAULT_ADJUST,
   DEFAULT_TASTE,
   GROUP_LIMITS,
   INGREDIENTS,
+  isCoffeeBase,
   applyAdjust,
   buildRecipe,
   computePrice,
