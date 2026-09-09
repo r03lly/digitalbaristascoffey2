@@ -340,7 +340,16 @@ export function BaristaProvider({ children }: { children: ReactNode }) {
     ensureRecipe,
     signIn: (userName, guest = false) =>
       setState((s) => ({ ...s, userName: userName || "Kreator", guest, entered: true })),
-    setBase: (baseId) => setState((s) => ({ ...s, baseId, menuItem: null })),
+    setBase: (baseId) =>
+      setState((s) => ({
+        ...s,
+        baseId,
+        menuItem: null,
+        // Base tanpa kopi tidak boleh menyisakan bahan berbahan kopi.
+        ingredients: isCoffeeBase(baseId)
+          ? s.ingredients
+          : s.ingredients.filter((i) => !COFFEE_INGREDIENT_IDS.includes(i)),
+      })),
     setTaste: (key, val) => setState((s) => ({ ...s, taste: { ...s.taste, [key]: val } })),
     toggleIngredient: (id) =>
       setState((s) => {
