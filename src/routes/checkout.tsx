@@ -381,7 +381,10 @@ function CheckoutPage() {
           )}
 
           <section className="mt-4">
-            <h3 className="label-caps text-primary">{t("No Telp / WhatsApp")}</h3>
+            <h3 className="label-caps text-primary">
+              {t("No Telp / WhatsApp")}{" "}
+              <span className="text-muted-foreground">{t("(opsional)")}</span>
+            </h3>
             <label className="mt-2 flex items-center gap-3 rounded-2xl border bg-background/40 px-4 py-3">
               <span className="text-xs text-muted-foreground">+62</span>
               <input
@@ -398,7 +401,7 @@ function CheckoutPage() {
             </label>
             {phoneError && (
               <p className="mt-1 text-xs text-destructive">
-                {t("Nomor Telp/WhatsApp wajib diisi sebelum konfirmasi pesanan.")}
+                {t("Nomor tidak valid — minimal 9 angka, atau biarkan kosong.")}
               </p>
             )}
           </section>
@@ -577,7 +580,7 @@ function CheckoutPage() {
                   setNameError(true);
                   return;
                 }
-                if (!phone.trim() || phone.replace(/^0+/, "").length < 9) {
+                if (phone.trim() && phone.replace(/^0+/, "").length < 9) {
                   setPhoneError(true);
                   return;
                 }
@@ -591,7 +594,12 @@ function CheckoutPage() {
                   matchScore: hasCart ? 0 : recipe.matchScore,
                   payment: paymentLabel,
                   option,
-                  note: `${t("No Telp/WA")}: +62 ${phone.replace(/^0+/, "")}${note.trim() ? `\n${note.trim()}` : ""}`,
+                  note: [
+                    phone.trim() ? `${t("No Telp/WA")}: +62 ${phone.replace(/^0+/, "")}` : "",
+                    note.trim(),
+                  ]
+                    .filter(Boolean)
+                    .join("\n"),
                   kind: hasCart ? "regular" : "signature",
                   lines,
                 });
