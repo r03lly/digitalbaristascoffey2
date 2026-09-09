@@ -233,7 +233,7 @@ export function buildRecipe(
   const compatibility = Math.max(70, Math.min(98, Math.round(matchScore - 3 + (ingredients.length > 5 ? -4 : 2))));
 
   const flavorLead = ingredients.find((i) => i.group === "Sirup & Rasa")?.name ?? taste.mood;
-  const name = `${NAME_PREFIX[taste.mood] ?? "Signature"} ${flavorLead} ${base.name.split(" ")[0] ?? base.name}`;
+  const name = `${NAME_PREFIX[taste.mood] ?? "Signature"} ${flavorLead} ${base.short}`;
 
   const price =
     base.price +
@@ -261,7 +261,9 @@ export function buildRecipe(
 
     steps: id
       ? [
-          `Ekstraksi ${base.name} sebagai fondasi rasa.`,
+          base.coffee
+            ? `Ekstraksi ${base.name} sebagai fondasi rasa.`
+            : `Siapkan ${base.name} sebagai fondasi rasa (tanpa kopi).`,
           ingredients.length
             ? `Tambahkan ${ingredients.map((i) => i.name).join(", ")} sesuai takaran AI.`
             : "Sajikan murni tanpa tambahan bahan.",
@@ -269,7 +271,9 @@ export function buildRecipe(
           "Cek balance akhir dan sajikan dalam gelas signature Scoffey.",
         ]
       : [
-          `Extract the ${base.name} as the flavour foundation.`,
+          base.coffee
+            ? `Extract the ${base.name} as the flavour foundation.`
+            : `Prepare the ${base.name} as the flavour foundation (coffee-free).`,
           ingredients.length
             ? `Add ${ingredients.map((i) => i.name).join(", ")} per the AI measurements.`
             : "Serve pure with no extra ingredients.",
