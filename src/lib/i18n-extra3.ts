@@ -52,6 +52,10 @@ export const EN_EXTRA3: Record<string, string> = {
   "1 sdm": "1 tbsp",
   "2 sdt": "2 tsp",
 
+  // Bahan
+  "Base tanpa kopi: semua bahan berbahan kopi disembunyikan.":
+    "Coffee-free base: all coffee-based ingredients are hidden.",
+
   // Akun
   "Masuk dulu untuk menyimpan rencana.": "Sign in first to save a plan.",
 };
