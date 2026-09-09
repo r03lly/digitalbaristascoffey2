@@ -577,7 +577,7 @@ function CheckoutPage() {
                   setNameError(true);
                   return;
                 }
-                if (!phone.trim() || phone.replace(/^0+/, "").length < 9) {
+                if (phone.trim() && phone.replace(/^0+/, "").length < 9) {
                   setPhoneError(true);
                   return;
                 }
