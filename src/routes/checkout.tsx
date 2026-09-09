@@ -381,7 +381,10 @@ function CheckoutPage() {
           )}
 
           <section className="mt-4">
-            <h3 className="label-caps text-primary">{t("No Telp / WhatsApp")}</h3>
+            <h3 className="label-caps text-primary">
+              {t("No Telp / WhatsApp")}{" "}
+              <span className="text-muted-foreground">{t("(opsional)")}</span>
+            </h3>
             <label className="mt-2 flex items-center gap-3 rounded-2xl border bg-background/40 px-4 py-3">
               <span className="text-xs text-muted-foreground">+62</span>
               <input
