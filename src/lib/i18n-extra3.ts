@@ -25,6 +25,9 @@ export const EN_EXTRA3: Record<string, string> = {
   // Checkout
   "Nomor Telp/WhatsApp wajib diisi sebelum konfirmasi pesanan.":
     "Please enter a phone/WhatsApp number before confirming the order.",
+  "Nomor tidak valid — minimal 9 angka, atau biarkan kosong.":
+    "Invalid number — at least 9 digits, or leave it empty.",
+  "(opsional)": "(optional)",
 
   // Menu makanan
   "Cheesecake klasik creamy, lembut dan manis pas.":
