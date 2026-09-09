@@ -591,7 +591,12 @@ function CheckoutPage() {
                   matchScore: hasCart ? 0 : recipe.matchScore,
                   payment: paymentLabel,
                   option,
-                  note: `${t("No Telp/WA")}: +62 ${phone.replace(/^0+/, "")}${note.trim() ? `\n${note.trim()}` : ""}`,
+                  note: [
+                    phone.trim() ? `${t("No Telp/WA")}: +62 ${phone.replace(/^0+/, "")}` : "",
+                    note.trim(),
+                  ]
+                    .filter(Boolean)
+                    .join("\n"),
                   kind: hasCart ? "regular" : "signature",
                   lines,
                 });
